@@ -204,6 +204,19 @@ function updateSectionShowAllButton(button, totalCount, expanded, singularLabel)
   button.setAttribute("aria-expanded", String(expanded));
 }
 
+function scrollToProviderResults() {
+  const providersSection = document.querySelector("#providers");
+  if (!providersSection) return;
+
+  providersSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function runProviderSearch() {
+  mobileSectionState.providersExpanded = true;
+  renderProviders();
+  scrollToProviderResults();
+}
+
 function readStore(key, fallback) {
   try {
     return JSON.parse(localStorage.getItem(key)) || fallback;
@@ -699,7 +712,7 @@ function refreshIcons() {
 
 refs.filterForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  renderProviders();
+  runProviderSearch();
 });
 
 refs.clearProviderFilters.addEventListener("click", () => {

@@ -404,6 +404,49 @@ textarea:focus {
   box-shadow: 0 0 0 4px rgba(244, 182, 39, 0.18);
 }
 
+#providers {
+  scroll-margin-top: 84px;
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.search-input-wrap input {
+  flex: 1;
+  padding-right: 54px;
+}
+
+.search-submit-btn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: var(--black);
+  background: var(--gold);
+  border: 0;
+  border-radius: calc(var(--radius) - 2px);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.search-submit-btn:hover {
+  transform: translateY(calc(-50% - 1px));
+  box-shadow: 0 8px 18px rgba(244, 182, 39, 0.28);
+}
+
+.search-submit-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.4;
+}
+
 .category-grid,
 .provider-grid {
   display: grid;

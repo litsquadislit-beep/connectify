@@ -74,9 +74,14 @@
         <h2>Find the right provider fast</h2>
       </div>
       <form class="filter-panel" id="filterForm" aria-label="Search and filter services">
-        <label>
+        <label class="search-field">
           <span>Service name</span>
-          <input id="searchInput" type="search" placeholder="Search plumber, AC, tutor...">
+          <div class="search-input-wrap">
+            <input id="searchInput" type="search" placeholder="Search plumber, AC, tutor..." enterkeyhint="search">
+            <button class="search-submit-btn" type="submit" aria-label="Search providers">
+              <i data-lucide="search"></i>
+            </button>
+          </div>
         </label>
         <label>
           <span>Category</span>
