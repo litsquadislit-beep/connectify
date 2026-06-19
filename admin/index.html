@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Connectify Admin | Directory Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="admin-page">
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Back to Connectify home">
+      <span class="brand-mark">C</span>
+      <span>Connectify</span>
+    </a>
+    <nav class="site-nav" aria-label="Admin navigation">
+      <a href="../index.html">View Site</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="admin" class="section admin-section">
+      <div class="admin-gate" id="adminGate">
+        <div class="section-heading">
+          <p class="eyebrow">Admin Access</p>
+          <h1 class="admin-title">Enter PIN to continue</h1>
+        </div>
+
+        <form class="admin-lock" id="adminPinForm">
+          <label>
+            <span>Admin PIN</span>
+            <input id="adminPin" type="password" inputmode="numeric" autocomplete="current-password" required placeholder="Enter PIN">
+          </label>
+          <button class="btn btn-primary" type="submit"><i data-lucide="unlock"></i> Continue</button>
+          <p class="form-status" id="adminStatus" role="status"></p>
+        </form>
+      </div>
+
+      <div class="admin-dashboard" id="adminDashboard" hidden>
+        <div class="section-heading split-heading wide-admin">
+          <div>
+            <p class="eyebrow">Admin Panel</p>
+            <h1 class="admin-title">Directory control center</h1>
+          </div>
+          <span class="admin-badge"><i data-lucide="lock-keyhole"></i> Admin only</span>
+        </div>
+
+        <div class="admin-card">
+          <h3>Change admin PIN</h3>
+          <form id="pinAdminForm" class="admin-form">
+            <input name="currentPin" type="password" inputmode="numeric" required placeholder="Current PIN">
+            <input name="newPin" type="password" inputmode="numeric" minlength="4" required placeholder="New PIN">
+            <input name="confirmPin" type="password" inputmode="numeric" minlength="4" required placeholder="Confirm new PIN">
+            <button class="btn btn-dark" type="submit"><i data-lucide="key-round"></i> Update PIN</button>
+            <p class="form-status" id="pinStatus" role="status"></p>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>Add new service category</h3>
+          <form id="categoryAdminForm" class="admin-form">
+            <input name="categoryName" required placeholder="Category name">
+            <input name="categoryIcon" placeholder="Icon or entity">
+            <button class="btn btn-dark" type="submit"><i data-lucide="folder-plus"></i> Add Category</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h3>Add or edit provider</h3>
+          <form id="providerAdminForm" class="admin-form provider-admin-form">
+            <input type="hidden" name="providerId">
+            <input name="name" required placeholder="Provider name">
+            <input name="category" required placeholder="Service category">
+            <input name="phone" required placeholder="Phone number">
+            <input name="area" required placeholder="Area">
+            <input name="price" required placeholder="Estimated price range">
+            <input name="rating" type="number" min="0" max="5" step="0.1" required placeholder="Rating">
+            <input name="reviews" type="number" min="0" step="1" required placeholder="Reviews">
+            <select name="verified">
+              <option value="true">Verified</option>
+              <option value="false">Unverified</option>
+            </select>
+            <button class="btn btn-dark" type="submit"><i data-lucide="save"></i> Save Provider</button>
+            <button class="btn btn-secondary" id="clearProviderForm" type="button"><i data-lucide="rotate-ccw"></i> Clear</button>
+          </form>
+        </div>
+
+        <div class="admin-card wide-admin">
+          <h3>Manage providers</h3>
+          <div class="admin-list" id="adminProviderList"></div>
+        </div>
+
+        <div class="admin-card wide-admin">
+          <h3>Submitted contacts</h3>
+          <div class="admin-list" id="submissionList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

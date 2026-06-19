@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Connectify helps Bahria residents find trusted local service providers and businesses in one place.">
+  <title>Connectify | One Place For All Services Numbers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Connectify home">
+      <span class="brand-mark">C</span>
+      <span>Connectify</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a href="#services">Services</a>
+      <a href="#providers">Providers</a>
+      <a href="#contribute">Contribute</a>
+      <a href="#founder">Founder</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Bahria's trusted local directory</p>
+        <h1>Connectify</h1>
+        <p class="tagline">One Place For All Services Numbers 📲</p>
+        <p class="hero-text">Find trusted local service providers in Bahria — faster, safer, and easier.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#services"><i data-lucide="search"></i> Find Services</a>
+          <a class="btn btn-secondary" href="#contribute"><i data-lucide="send"></i> Submit Trusted Contact</a>
+        </div>
+        <div class="trust-strip" aria-label="Connectify trust highlights">
+          <div class="trust-card">
+            <i data-lucide="shield-check"></i>
+            <div>
+              <strong>Verified badges</strong>
+              <span>Trusted provider verification</span>
+            </div>
+          </div>
+          <div class="trust-card">
+            <i data-lucide="star"></i>
+            <div>
+              <strong>Community reviews</strong>
+              <span>Real feedback from residents</span>
+            </div>
+          </div>
+          <div class="trust-card">
+            <i data-lucide="phone-call"></i>
+            <div>
+              <strong>One-tap contact</strong>
+              <span>Instant call &amp; WhatsApp access</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Local services illustration">
+        <img src="assets/connectify-hero.png" alt="Illustration of trusted Bahria service providers, home services, emergency support, and local businesses">
+      </div>
+    </section>
+
+    <section id="services" class="section search-section">
+      <div class="section-heading">
+        <p class="eyebrow">Search & Filter Services</p>
+        <h2>Find the right provider fast</h2>
+      </div>
+      <form class="filter-panel" id="filterForm" aria-label="Search and filter services">
+        <label>
+          <span>Service name</span>
+          <input id="searchInput" type="search" placeholder="Search plumber, AC, tutor...">
+        </label>
+        <label>
+          <span>Category</span>
+          <select id="categoryFilter">
+            <option value="">All categories</option>
+          </select>
+        </label>
+        <label>
+          <span>Area</span>
+          <select id="areaFilter">
+            <option value="">All areas</option>
+          </select>
+        </label>
+        <label>
+          <span>Minimum rating</span>
+          <select id="ratingFilter">
+            <option value="">Any rating</option>
+            <option value="4.8">4.8+</option>
+            <option value="4.5">4.5+</option>
+            <option value="4">4.0+</option>
+          </select>
+        </label>
+        <label>
+          <span>Status</span>
+          <select id="verifiedFilter">
+            <option value="">All</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Unverified</option>
+          </select>
+        </label>
+      </form>
+    </section>
+
+    <section class="section categories-section">
+      <div class="section-heading">
+        <p class="eyebrow">Service Categories</p>
+        <h2>Everything residents ask for most</h2>
+      </div>
+      <div class="category-grid" id="categoryGrid"></div>
+    </section>
+
+    <section id="providers" class="section providers-section">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Provider Listings</p>
+          <h2>Trusted contacts, ready to call</h2>
+        </div>
+        <div class="provider-heading-actions">
+          <p class="result-count" id="resultCount">0 providers</p>
+          <button class="show-all-btn" id="showAllProviders" type="button" hidden><i data-lucide="rotate-ccw"></i> Show All</button>
+        </div>
+      </div>
+      <div class="provider-grid" id="providerGrid"></div>
+      <p class="empty-state" id="emptyState">No providers match the selected filters.</p>
+    </section>
+
+    <section class="section verification-section">
+      <div class="verification-card verified-card">
+        <i data-lucide="badge-check"></i>
+        <h2>Verified Providers</h2>
+        <p>Verified providers have submitted basic details/CNIC verification.</p>
+      </div>
+      <div class="verification-card unverified-card">
+        <i data-lucide="users"></i>
+        <h2>Unverified Providers</h2>
+        <p>Unverified providers are community-submitted and still need confirmation.</p>
+      </div>
+    </section>
+
+    <section id="contribute" class="section contribute-section">
+      <div class="section-heading">
+        <p class="eyebrow">How You Can Contribute</p>
+        <h2>Submit trusted contacts you personally used and trust</h2>
+      </div>
+      <form class="contribution-form" id="contributionForm">
+        <label>
+          <span>Your name</span>
+          <input name="residentName" required placeholder="Your name">
+        </label>
+        <label>
+          <span>Provider name</span>
+          <input name="providerName" required placeholder="Provider or business name">
+        </label>
+        <label>
+          <span>Service type</span>
+          <input name="serviceType" required placeholder="Electrician, tutor, delivery...">
+        </label>
+        <label>
+          <span>Phone number</span>
+          <input name="phone" required placeholder="+92 300 000 0000">
+        </label>
+        <label>
+          <span>Area</span>
+          <input name="area" required placeholder="Bahria Phase 7">
+        </label>
+        <label class="wide">
+          <span>Your experience/review</span>
+          <textarea name="review" required rows="5" placeholder="Share what went well, pricing, punctuality, or quality."></textarea>
+        </label>
+        <fieldset class="wide">
+          <legend>Personally used?</legend>
+          <label class="radio-card">
+            <input type="radio" name="used" value="Yes" checked>
+            <span>Yes</span>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="used" value="No">
+            <span>No</span>
+          </label>
+        </fieldset>
+        <button class="btn btn-primary wide" type="submit"><i data-lucide="plus-circle"></i> Submit Trusted Contact</button>
+        <p class="form-status" id="formStatus" role="status"></p>
+      </form>
+    </section>
+
+    <section id="founder" class="section founder-section">
+      <div class="founder-photo">
+        <img src="assets/abdullah-tariq-founder.png" alt="Abdullah Tariq, founder of Connectify">
+      </div>
+      <div class="founder-copy">
+        <p class="eyebrow">MEET THE FOUNDER</p>
+        <h2>Abdullah Tariq</h2>
+        <p>Meet the visionary behind Connectify - Abdullah Tariq, a Software Engineer and tech enthusiast passionate about building solutions that create real impact in the community.</p>
+        <p>With a vision to make local services more accessible, reliable, and safer for everyone in Bahria, he started Connectify to bridge the gap between residents and trusted service providers through technology, transparency, and community trust.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="provider-modal" id="providerModal" hidden role="dialog" aria-modal="true" aria-labelledby="providerModalTitle">
+    <div class="provider-modal-backdrop" data-close-provider-modal></div>
+    <section class="provider-modal-panel">
+      <button class="modal-close" type="button" data-close-provider-modal aria-label="Close provider details">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-content" id="providerModalContent"></div>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <p>Connectify — One Community. One Platform. Endless Services.</p>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
