@@ -153,7 +153,9 @@ const refs = {
   filterForm: document.querySelector("#filterForm"),
   providerGrid: document.querySelector("#providerGrid"),
   resultCount: document.querySelector("#resultCount"),
-  showAllProviders: document.querySelector("#showAllProviders"),
+  clearProviderFilters: document.querySelector("#clearProviderFilters"),
+  showAllCategories: document.querySelector("#showAllCategories"),
+  showAllProvidersList: document.querySelector("#showAllProvidersList"),
   emptyState: document.querySelector("#emptyState"),
   contributionForm: document.querySelector("#contributionForm"),
   formStatus: document.querySelector("#formStatus"),
@@ -166,6 +168,41 @@ let activeProviderTab = "overview";
 let pendingReviewImages = [];
 let pendingPhotoImages = [];
 let pendingOfficialImages = [];
+
+const MOBILE_PREVIEW_LIMIT = 3;
+const mobileBreakpoint = window.matchMedia("(max-width: 919px)");
+const mobileSectionState = {
+  categoriesExpanded: false,
+  providersExpanded: false
+};
+
+function isMobileView() {
+  return mobileBreakpoint.matches;
+}
+
+function getPreviewItems(items, expanded) {
+  if (!isMobileView() || expanded || items.length <= MOBILE_PREVIEW_LIMIT) {
+    return items;
+  }
+  return items.slice(0, MOBILE_PREVIEW_LIMIT);
+}
+
+function updateSectionShowAllButton(button, totalCount, expanded, singularLabel) {
+  if (!button) return;
+
+  const shouldShow = isMobileView() && totalCount > MOBILE_PREVIEW_LIMIT;
+  button.hidden = !shouldShow;
+  if (!shouldShow) return;
+
+  const remaining = totalCount - MOBILE_PREVIEW_LIMIT;
+  const icon = expanded ? "chevron-up" : "chevron-down";
+  const label = expanded
+    ? `Show Less`
+    : `Show All ${singularLabel} (${remaining} more)`;
+
+  button.innerHTML = `<i data-lucide="${icon}"></i> ${label}`;
+  button.setAttribute("aria-expanded", String(expanded));
+}
 
 function readStore(key, fallback) {
   try {
@@ -274,7 +311,10 @@ function renderFilters() {
 }
 
 function renderCategories() {
-  refs.categoryGrid.innerHTML = state.categories.map((category) => {
+  const categories = state.categories;
+  const visibleCategories = getPreviewItems(categories, mobileSectionState.categoriesExpanded);
+
+  refs.categoryGrid.innerHTML = visibleCategories.map((category) => {
     const count = state.providers.filter((provider) => provider.category === category.name).length;
     const visual = categoryVisuals[category.name] || { className: "more", icon: "badge-plus", detail: "Community trusted service" };
     return `
@@ -291,6 +331,13 @@ function renderCategories() {
       </article>
     `;
   }).join("");
+
+  updateSectionShowAllButton(
+    refs.showAllCategories,
+    categories.length,
+    mobileSectionState.categoriesExpanded,
+    "Categories"
+  );
   refreshIcons();
 }
 
@@ -588,10 +635,18 @@ function closeProviderModal() {
 
 function renderProviders() {
   const providers = getFilteredProviders();
+  const visibleProviders = getPreviewItems(providers, mobileSectionState.providersExpanded);
+
   refs.resultCount.textContent = `${providers.length} provider${providers.length === 1 ? "" : "s"}`;
-  refs.showAllProviders.hidden = !refs.categoryFilter.value && !refs.searchInput.value && !refs.areaFilter.value && !refs.ratingFilter.value && !refs.verifiedFilter.value;
+  refs.clearProviderFilters.hidden = !(
+    refs.categoryFilter.value ||
+    refs.searchInput.value ||
+    refs.areaFilter.value ||
+    refs.ratingFilter.value ||
+    refs.verifiedFilter.value
+  );
   refs.emptyState.style.display = providers.length ? "none" : "block";
-  refs.providerGrid.innerHTML = providers.map((provider) => `
+  refs.providerGrid.innerHTML = visibleProviders.map((provider) => `
     <article class="provider-card provider-card-clickable" data-provider-id="${provider.id}" tabindex="0" aria-label="Open details for ${escapeHtml(provider.name)}">
       <div class="provider-top">
         <div>
@@ -619,6 +674,13 @@ function renderProviders() {
       <p class="card-detail-hint">Tap card for full details, reviews, and photos.</p>
     </article>
   `).join("");
+
+  updateSectionShowAllButton(
+    refs.showAllProvidersList,
+    providers.length,
+    mobileSectionState.providersExpanded,
+    "Providers"
+  );
   refreshIcons();
 }
 
@@ -629,7 +691,10 @@ function refreshIcons() {
 }
 
 ["input", "change"].forEach((eventName) => {
-  refs.filterForm.addEventListener(eventName, renderProviders);
+  refs.filterForm.addEventListener(eventName, () => {
+    mobileSectionState.providersExpanded = false;
+    renderProviders();
+  });
 });
 
 refs.filterForm.addEventListener("submit", (event) => {
@@ -637,12 +702,32 @@ refs.filterForm.addEventListener("submit", (event) => {
   renderProviders();
 });
 
-refs.showAllProviders.addEventListener("click", () => {
+refs.clearProviderFilters.addEventListener("click", () => {
   refs.searchInput.value = "";
   refs.categoryFilter.value = "";
   refs.areaFilter.value = "";
   refs.ratingFilter.value = "";
   refs.verifiedFilter.value = "";
+  mobileSectionState.providersExpanded = false;
+  renderProviders();
+});
+
+refs.showAllCategories.addEventListener("click", () => {
+  mobileSectionState.categoriesExpanded = !mobileSectionState.categoriesExpanded;
+  renderCategories();
+});
+
+refs.showAllProvidersList.addEventListener("click", () => {
+  mobileSectionState.providersExpanded = !mobileSectionState.providersExpanded;
+  renderProviders();
+});
+
+mobileBreakpoint.addEventListener("change", () => {
+  if (!mobileBreakpoint.matches) {
+    mobileSectionState.categoriesExpanded = false;
+    mobileSectionState.providersExpanded = false;
+  }
+  renderCategories();
   renderProviders();
 });
 
@@ -826,6 +911,7 @@ refs.categoryGrid.addEventListener("click", (event) => {
   const card = event.target.closest(".category-card");
   if (!card) return;
   refs.categoryFilter.value = card.dataset.category;
+  mobileSectionState.providersExpanded = false;
   renderProviders();
   document.querySelector("#providers").scrollIntoView({ behavior: "smooth" });
 });

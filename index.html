@@ -116,6 +116,9 @@
         <h2>Everything residents ask for most</h2>
       </div>
       <div class="category-grid" id="categoryGrid"></div>
+      <button class="show-all-btn section-show-all-btn" id="showAllCategories" type="button" hidden>
+        <i data-lucide="chevron-down"></i> Show All Categories
+      </button>
     </section>
 
     <section id="providers" class="section providers-section">
@@ -126,10 +129,13 @@
         </div>
         <div class="provider-heading-actions">
           <p class="result-count" id="resultCount">0 providers</p>
-          <button class="show-all-btn" id="showAllProviders" type="button" hidden><i data-lucide="rotate-ccw"></i> Show All</button>
+          <button class="show-all-btn" id="clearProviderFilters" type="button" hidden><i data-lucide="rotate-ccw"></i> Clear Filters</button>
         </div>
       </div>
       <div class="provider-grid" id="providerGrid"></div>
+      <button class="show-all-btn section-show-all-btn" id="showAllProvidersList" type="button" hidden>
+        <i data-lucide="chevron-down"></i> Show All Providers
+      </button>
       <p class="empty-state" id="emptyState">No providers match the selected filters.</p>
     </section>
 

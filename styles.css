@@ -1163,6 +1163,15 @@ textarea:focus {
   height: 15px;
 }
 
+.section-show-all-btn {
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  min-height: 44px;
+  margin: 16px auto 0;
+  justify-content: center;
+}
+
 .provider-card {
   display: grid;
   gap: 14px;
