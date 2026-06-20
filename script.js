@@ -1,3 +1,17 @@
+// Initialize Supabase if not already done
+if (typeof supabase === 'undefined' || !supabase.from) {
+  window.supabase = window.supabase.createClient(
+    'https://yfzdlodxwfhbzzvqsaau.supabase.co',
+    'sb_publishable_BF1M6x269XZI25QE4ruRPw_Y06C9gHR'
+  );
+}
+const supabase = window.supabase;
+
+// ============ STATE & REFS ============
+...rest of code
+
+
+
 // ============ STATE & REFS ============
 const state = {
   categories: [],
