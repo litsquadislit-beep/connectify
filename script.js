@@ -1,11 +1,26 @@
-// Initialize Supabase if not already done
-if (typeof supabase === 'undefined' || !supabase.from) {
-  window.supabase = window.supabase.createClient(
+// Initialize Supabase
+let supabase;
+
+function waitForSupabase() {
+  if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
+    setTimeout(waitForSupabase, 50);
+    return;
+  }
+  
+  supabase = window.supabase.createClient(
     'https://yfzdlodxwfhbzzvqsaau.supabase.co',
     'sb_publishable_BF1M6x269XZI25QE4ruRPw_Y06C9gHR'
   );
+  
+  console.log('✓ Supabase connected:', !!supabase.from);
+  setTimeout(() => fetchProviders(), 100);
 }
-const supabase = window.supabase;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', waitForSupabase);
+} else {
+  waitForSupabase();
+}
 
 // ============ STATE & REFS ============
 ...rest of code
@@ -564,4 +579,4 @@ refs.contributionForm.addEventListener("submit", async (event) => {
 });
 
 // ============ INITIALIZE ============
-fetchProviders();
+// fetchProviders() is called after Supabase initialization above
