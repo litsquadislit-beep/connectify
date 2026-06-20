@@ -1,4 +1,4 @@
-// ============ SUPABASE INITIALIZATION ============
+
 let supabase;
 
 function initSupabase() {
