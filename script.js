@@ -63,6 +63,7 @@ async function loadAllProviders() {
     console.log('✓ Loaded providers:', appState.providers.length);
     
     updateFilterOptions();
+    displayCategories();
     displayProviders();
   } catch (err) {
     console.error('Error loading providers:', err);
@@ -154,6 +155,87 @@ function updateFilterOptions() {
   
   domRefs.areaFilter.innerHTML = '<option value="">All areas</option>' +
     areas.map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+}
+
+// CATEGORY CARDS DISPLAY
+const categoryIconMap = {
+  'Plumber': 'wrench',
+  'Electrician': 'zap',
+  'AC Service': 'air-vent',
+  'Technician': 'screwdriver',
+  'Cleaner': 'vacuum',
+  'Carpenter': 'hammer',
+  'Painter': 'palette',
+  'Mason': 'bricks',
+  'Mechanic': 'cog',
+  'Tutor': 'book-open',
+  'Medical': 'stethoscope',
+  'Delivery': 'truck',
+  'Business': 'briefcase',
+  'Emergency': 'alert-triangle'
+};
+
+const categoryClassMap = {
+  'Plumber': 'plumber',
+  'Electrician': 'electrician',
+  'AC Service': 'ac',
+  'Technician': 'technician',
+  'Cleaner': 'cleaner',
+  'Carpenter': 'carpenter',
+  'Painter': 'painter',
+  'Mason': 'mason',
+  'Mechanic': 'mechanic',
+  'Tutor': 'tutor',
+  'Medical': 'medical',
+  'Delivery': 'delivery',
+  'Business': 'business',
+  'Emergency': 'emergency'
+};
+
+function displayCategories() {
+  const categories = [...new Set(appState.providers.map(p => p.category))].sort();
+  const categoryGrid = document.querySelector("#categoryGrid");
+  
+  if (!categoryGrid) return;
+  
+  categoryGrid.innerHTML = categories.map(cat => {
+    const cssClass = categoryClassMap[cat] || 'more';
+    const icon = categoryIconMap[cat] || 'tag';
+    const count = appState.providers.filter(p => p.category === cat).length;
+    
+    return `
+      <article class="category-card category-card--${cssClass}" data-category="${escapeHtml(cat)}" role="button" tabindex="0">
+        <div class="category-visual">
+          <div class="category-visual-glow"></div>
+          <i data-lucide="${icon}"></i>
+        </div>
+        <div class="category-copy">
+          <h3>${escapeHtml(cat)}</h3>
+          <p>${count}</p>
+          <span>${count === 1 ? 'provider' : 'providers'}</span>
+        </div>
+      </article>
+    `;
+  }).join('');
+  
+  // Make cards clickable
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const category = card.dataset.category;
+      domRefs.categoryFilter.value = category;
+      displayProviders();
+      document.querySelector('#providers').scrollIntoView({ behavior: 'smooth' });
+    });
+    
+    card.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+  
+  refreshIcons();
 }
 
 function displayProviders() {
