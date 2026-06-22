@@ -136,8 +136,15 @@ const refs = {
   providerAdminForm: document.querySelector("#providerAdminForm"),
   clearProviderForm: document.querySelector("#clearProviderForm"),
   adminProviderList: document.querySelector("#adminProviderList"),
-  submissionList: document.querySelector("#submissionList")
+  submissionList: document.querySelector("#submissionList"),
+  csvUploadForm: document.querySelector("#csvUploadForm"),
+  csvFile: document.querySelector("#csvFile"),
+  csvPreview: document.querySelector("#csvPreview"),
+  csvImportBtn: document.querySelector("#csvImportBtn"),
+  csvStatus: document.querySelector("#csvStatus")
 };
+
+let csvData = [];
 
 function readStore(key, fallback) {
   try {
@@ -357,5 +364,153 @@ refs.submissionList.addEventListener("click", (event) => {
   saveAll();
   renderAll();
 });
+
+// ========== CSV IMPORT FUNCTIONS ==========
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const data = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    
+    const values = lines[i].split(',').map(v => v.trim());
+    const row = {};
+    
+    headers.forEach((header, idx) => {
+      row[header] = values[idx] || '';
+    });
+    
+    data.push(row);
+  }
+  
+  return data;
+}
+
+function validateCSVRow(row) {
+  return {
+    isValid: row.name && row.phone && row.category && row.area,
+    errors: [
+      !row.name && 'Missing name',
+      !row.phone && 'Missing phone',
+      !row.category && 'Missing category',
+      !row.area && 'Missing area'
+    ].filter(Boolean)
+  };
+}
+
+function renderCSVPreview(data) {
+  if (data.length === 0) {
+    refs.csvPreview.innerHTML = '<p class="csv-error">No valid data found</p>';
+    return;
+  }
+
+  const validRows = data.filter(row => validateCSVRow(row).isValid);
+  const duplicates = validRows.filter(row => 
+    state.providers.some(p => p.phone.replace(/\D/g, '') === row.phone.replace(/\D/g, ''))
+  );
+
+  refs.csvPreview.innerHTML = `
+    <div class="csv-preview-summary">
+      <p><strong>${validRows.length}</strong> valid entries found</p>
+      ${duplicates.length > 0 ? `<p class="csv-warning">⚠️ ${duplicates.length} duplicates (by phone) - will be skipped</p>` : ''}
+    </div>
+    <div class="csv-preview-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Category</th>
+            <th>Area</th>
+            <th>Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${validRows.map(row => {
+            const isDupe = duplicates.some(d => d.phone === row.phone);
+            return `
+              <tr ${isDupe ? 'class="csv-duplicate"' : ''}>
+                <td>${row.name}</td>
+                <td>${row.phone}</td>
+                <td>${row.category}</td>
+                <td>${row.area}</td>
+                <td>${row.price || 'N/A'}</td>
+                <td>${isDupe ? '🔄 Duplicate' : '✓ New'}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  refs.csvImportBtn.hidden = false;
+}
+
+function importCSV() {
+  const validRows = csvData.filter(row => validateCSVRow(row).isValid);
+  let imported = 0;
+  let skipped = 0;
+
+  validRows.forEach(row => {
+    const isDupe = state.providers.some(p => 
+      p.phone.replace(/\D/g, '') === row.phone.replace(/\D/g, '')
+    );
+
+    if (!isDupe) {
+      state.providers.unshift({
+        id: crypto.randomUUID(),
+        name: row.name,
+        category: row.category,
+        phone: row.phone,
+        area: row.area,
+        price: row.price || 'To be confirmed',
+        rating: Number(row.rating) || 4.0,
+        reviews: Number(row.reviews) || 0,
+        verified: row.verified === 'true' || row.verified === 'yes'
+      });
+
+      if (!state.categories.some(c => c.name.toLowerCase() === row.category.toLowerCase())) {
+        state.categories.push({ name: row.category, icon: '&bull;' });
+      }
+
+      imported++;
+    } else {
+      skipped++;
+    }
+  });
+
+  saveAll();
+  refs.csvStatus.textContent = `✓ Imported ${imported} providers${skipped > 0 ? ` (${skipped} duplicates skipped)` : ''}`;
+  refs.csvFile.value = '';
+  refs.csvPreview.innerHTML = '';
+  refs.csvImportBtn.hidden = true;
+  csvData = [];
+  
+  setTimeout(() => {
+    refs.csvStatus.textContent = '';
+    renderAll();
+  }, 2000);
+}
+
+refs.csvUploadForm?.addEventListener('change', (e) => {
+  const file = refs.csvFile.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      csvData = parseCSV(event.target.result);
+      renderCSVPreview(csvData);
+    } catch (err) {
+      refs.csvPreview.innerHTML = `<p class="csv-error">Error parsing CSV: ${err.message}</p>`;
+    }
+  };
+  reader.readAsText(file);
+});
+
+refs.csvImportBtn?.addEventListener('click', importCSV);
 
 refreshIcons();
